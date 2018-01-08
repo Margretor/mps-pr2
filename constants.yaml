@@ -4,7 +4,6 @@ TIME:
   default: show time now
   city: show time in
 NETWORK: check network
-START IMAGE: start image
-STOP IMAGE: stop image
-SEARCH: search
-EMAIL: emails
+GOOGLE: search on google
+BROWSE: open
+YOUTUBE: search on youtube

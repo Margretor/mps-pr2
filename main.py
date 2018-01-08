@@ -50,29 +50,47 @@ def check_network_connection():
 
 
 def search_on_google(list_to_search):
-    string = '\n'.join(map(str, list_to_search))
+    string = ' '.join(map(str, list_to_search))
     webbrowser.open("http://google.com/?#q=" + str(string))
 
 
-def execute(input, r):
-    if input == yaml_data['STOP']:
+def browse(site):
+    webbrowser.open('http://www.' + site + '.com')
+
+
+def search_on_youtube(list_to_search):
+    string = ' '.join(map(str, list_to_search))
+    webbrowser.open('http://www.youtube.com/results?search_query=' + str(string))
+
+
+def execute(voice_string, r):
+    if voice_string == yaml_data['STOP']:
         sys.exit(0)
-    if input == yaml_data['IP']:
+    if voice_string == yaml_data['IP']:
         show_ip()
         return
-    if input == yaml_data['TIME']['default']:
+    if voice_string == yaml_data['TIME']['default']:
         show_time()
         return
-    if input == yaml_data['TIME']['city']:
+    if voice_string == yaml_data['TIME']['city']:
         show_city_time(r)
         return
-    if input == yaml_data['NETWORK']:
+    if voice_string == yaml_data['NETWORK']:
         check_network_connection()
         return
-    if input.split()[0] == yaml_data['SEARCH']:
-        lst = input.split()[1:]
+    if ' '.join(map(str, voice_string.split()[0:3])) == yaml_data['GOOGLE']:
+        lst = voice_string.split()[3:]
         search_on_google(lst)
         return
+    if voice_string.split()[0] == yaml_data['BROWSE']:
+        site = voice_string.split()[1]
+        browse(site)
+        return
+    if ' '.join(map(str, voice_string.split()[0:3])) == yaml_data['YOUTUBE']:
+        lst = voice_string.split()[3:]
+        search_on_youtube(lst)
+        return
+
 
 def main():
     global yaml_data
@@ -87,6 +105,7 @@ def main():
     r.dynamic_energy_adjustment_damping = 0.15
     while True:
         with sr.Microphone() as source:
+            print("Here")
             r.adjust_for_ambient_noise(source)
             audio = r.listen(source, timeout=None)
             try:
