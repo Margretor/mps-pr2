@@ -3,20 +3,26 @@ import yaml
 import sys
 import socket
 import datetime
+import webbrowser
+import os
+from gtts import gTTS
 
 yaml_data = []
 
+def say(param):
+    tts = gTTS(text=param, lang='en')
+    tts.save("temp.mp3")
+    os.system("mpg321 temp.mp3")
 
 def show_ip():
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     s.connect(("8.8.8.8", 80))
-    say('IP address is ' + str(s.getsockname()[0]))
     print('IP address is ' + str(s.getsockname()[0]))
     s.close()
 
 
 def show_time():
-    say('Today is ' + str(datetime.datetime.now()))
+    print('Today is ' + str(datetime.datetime.now()))
 
 
 def show_city_time(r):
@@ -33,6 +39,20 @@ def show_city_time(r):
                 print("Could not request results from Google Speech Recognision " + e)
 
 
+def check_network_connection():
+    try:
+        urllib.request.urlopen('http://216.58.192.142', timeout=1)
+        say('This computer is connect to internet')
+        print('This computer is connect to internet')
+    except urllib.request.URLError as err:
+        say('You don\'t have internet connection')
+        print('You don\'t have internet connection')
+
+
+def search_on_google(list_to_search):
+    string = '\n'.join(map(str, list_to_search))
+    webbrowser.open("http://google.com/?#q=" + str(string))
+
 
 def execute(input, r):
     if input == yaml_data['STOP']:
@@ -45,6 +65,13 @@ def execute(input, r):
         return
     if input == yaml_data['TIME']['city']:
         show_city_time(r)
+        return
+    if input == yaml_data['NETWORK']:
+        check_network_connection()
+        return
+    if input.split()[0] == yaml_data['SEARCH']:
+        lst = input.split()[1:]
+        search_on_google(lst)
         return
 
 def main():
