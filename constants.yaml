@@ -1,0 +1,10 @@
+IP: show ip
+STOP: stop
+TIME:
+  default: show time now
+  city: show time in
+NETWORK: check network
+START IMAGE: start image
+STOP IMAGE: stop image
+SEARCH: search
+EMAIL: emails
