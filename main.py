@@ -62,6 +62,13 @@ def search_on_youtube(list_to_search):
     string = ' '.join(map(str, list_to_search))
     webbrowser.open('http://www.youtube.com/results?search_query=' + str(string))
 
+def show_weather(city):
+    weather_key = "88eb55351af5beaf25d3a4f9ca84207a"
+    weather_url = "http://api.openweathermap.org/data/2.5/weather?q="+city
+    weather_url = weather_url + "&APPID=" + weather_key
+    r = requests.get(weather_url)
+    say(r)
+
 
 def execute(voice_string, r):
     if voice_string == yaml_data['STOP']:
@@ -90,6 +97,9 @@ def execute(voice_string, r):
         lst = voice_string.split()[3:]
         search_on_youtube(lst)
         return
+    if voice_string.split()[0] == yaml_data['WEATHER']:
+        city='+'.join(map(str, voice_string.split()[1:]))
+        show_weather(city)
 
 
 def main():
