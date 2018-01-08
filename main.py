@@ -1,12 +1,5 @@
 import speech_recognition as sr
-import webbrowser
-import pyttsx
-import time
-from gtts import gTTS
-import os
-import urllib
 import yaml
-import imaplib
 import sys
 import socket
 import datetime
@@ -21,13 +14,38 @@ def show_ip():
     print('IP address is ' + str(s.getsockname()[0]))
     s.close()
 
+
+def show_time():
+    say('Today is ' + str(datetime.datetime.now()))
+
+
+def show_city_time(r):
+    while True:
+        with sr.Microphone() as source:
+            r.adjust_for_ambient_noise(source)
+            audio = r.listen(source, timeout=None)
+            try:
+                city = r.recognize_google(audio).lower()
+                break
+            except sr.UnknownValueError:
+                print("Your assistent could not understand audio, please say again!")
+            except sr.RequestError as e:
+                print("Could not request results from Google Speech Recognision " + e)
+
+
+
 def execute(input, r):
     if input == yaml_data['STOP']:
         sys.exit(0)
     if input == yaml_data['IP']:
         show_ip()
         return
-
+    if input == yaml_data['TIME']['default']:
+        show_time()
+        return
+    if input == yaml_data['TIME']['city']:
+        show_city_time(r)
+        return
 
 def main():
     global yaml_data
