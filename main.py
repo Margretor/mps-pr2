@@ -1,3 +1,5 @@
+import json
+
 import speech_recognition as sr
 import yaml
 import sys
@@ -10,20 +12,22 @@ from gtts import gTTS
 
 yaml_data = []
 
+
 def say(param):
     tts = gTTS(text=param, lang='en')
     tts.save("temp.mp3")
     os.system("mpg321 temp.mp3")
 
+
 def show_ip():
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     s.connect(("8.8.8.8", 80))
-    print('IP address is ' + str(s.getsockname()[0]))
+    say('IP address is ' + str(s.getsockname()[0]))
     s.close()
 
 
 def show_time():
-    print('Today is ' + str(datetime.datetime.now()))
+    say('Today is ' + str(datetime.datetime.now()))
 
 
 def show_city_time(r):
@@ -35,9 +39,9 @@ def show_city_time(r):
                 city = r.recognize_google(audio).lower()
                 break
             except sr.UnknownValueError:
-                print("Your assistent could not understand audio, please say again!")
+                say("Your assistent could not understand audio, please say again!")
             except sr.RequestError as e:
-                print("Could not request results from Google Speech Recognision " + e)
+                say("Could not request results from Google Speech Recognition " + e)
 
 
 def check_network_connection():
@@ -63,17 +67,29 @@ def search_on_youtube(list_to_search):
     string = ' '.join(map(str, list_to_search))
     webbrowser.open('http://www.youtube.com/results?search_query=' + str(string))
 
+
 def show_weather(city):
     weather_key = "88eb55351af5beaf25d3a4f9ca84207a"
-    weather_url = "http://api.openweathermap.org/data/2.5/weather?q="+city
+    weather_url = "http://api.openweathermap.org/data/2.5/weather?q=" + city
     weather_url = weather_url + "&APPID=" + weather_key
     r = requests.get(weather_url)
-    print("Weather: " + str(r.text))
+    json_data = json.loads(r.text)
+    weather_data = json_data["main"]
+    temp_min = weather_data["temp_min"]
+    temp_max = weather_data["temp_max"]
+    location = json_data["name"]
+    say("In " + str(location) + " the minimum temperature is " + str(
+        temp_min - 273.15) + "celsius while the maximum temperature "
+                             "is " + str(temp_max - 273.15) + " celsius")
 
 
 def search_on_map(list_to_search):
     place = ' '.join(map(str, list_to_search))
     webbrowser.open('https://www.google.ro/maps/place/' + place)
+
+
+def start_program(cmd):
+    os.system(cmd)
 
 
 def execute(voice_string, r):
@@ -109,6 +125,12 @@ def execute(voice_string, r):
     if ' '.join(map(str, voice_string.split()[0:2])) == yaml_data['MAP']:
         lst = voice_string.split()[2:]
         search_on_map(lst)
+        return
+    if voice_string.split()[0] == yaml_data['EDITOR']:
+        start_program("gedit")
+        return
+    if voice_string.split()[0] == yaml_data['TERMINAL']:
+        start_program("gnome-terminal")
         return
 
 
