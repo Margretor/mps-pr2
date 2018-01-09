@@ -21,7 +21,7 @@ Prezentarea proiectului: https://ocw.cs.pub.ro/courses/mps/proiect/proiect-2
 Roluri:
 
 
-dev : Codescu Radu, Mihalache Octavian, Badea Corneliu Robert
+dev : Codescu Radu, Mihalache Octavian
 
 tester: Badea Corneliu-Robert
 
