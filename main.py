@@ -7,6 +7,7 @@ import socket
 import datetime
 import webbrowser
 import os
+import urllib3
 import requests
 from gtts import gTTS
 
@@ -46,10 +47,10 @@ def show_city_time(r):
 
 def check_network_connection():
     try:
-        urllib.request.urlopen('http://216.58.192.142', timeout=1)
+        urllib3.request.urlopen('http://216.58.192.142', timeout=1)
         say('This computer is connect to internet')
         print('This computer is connect to internet')
-    except urllib.request.URLError as err:
+    except urllib3.request.URLError as err:
         say('You don\'t have internet connection')
         print('You don\'t have internet connection')
 
@@ -131,6 +132,9 @@ def execute(voice_string, r):
         return
     if voice_string.split()[0] == yaml_data['TERMINAL']:
         start_program("gnome-terminal")
+        return
+    if voice_string == yaml_data['MUSIC']:
+        start_program("rhythmbox")
         return
 
 
